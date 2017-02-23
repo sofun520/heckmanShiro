@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.heckman.module.framework.dao.TPermissionMapper">
+	<resultMap id="BaseResultMap" type="cn.heckman.module.framework.pojo.TPermission">
+		<id column="p_id" property="pId" jdbcType="INTEGER" />
+		<result column="p_token" property="pToken" jdbcType="VARCHAR" />
+		<result column="p_url" property="pUrl" jdbcType="VARCHAR" />
+		<result column="p_description" property="pDescription"
+			jdbcType="VARCHAR" />
+		<result column="p_type" property="pType" jdbcType="CHAR" />
+		<result column="p_add_time" property="pAddTime" jdbcType="TIMESTAMP" />
+		<result column="p_status" property="pStatus" jdbcType="CHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		p_id, p_token, p_url, p_description, p_type, p_add_time,
+		p_status
+	</sql>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_permission
+		where p_id = #{pId,jdbcType=INTEGER}
+	</select>
+
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from t_permission
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from t_permission
+		where
+		p_id = #{pId,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="cn.heckman.module.framework.pojo.TPermission">
+		insert into t_permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="pId != null">
+				p_id,
+			</if>
+			<if test="pToken != null">
+				p_token,
+			</if>
+			<if test="pUrl != null">
+				p_url,
+			</if>
+			<if test="pDescription != null">
+				p_description,
+			</if>
+			<if test="pType != null">
+				p_type,
+			</if>
+			<if test="pAddTime != null">
+				p_add_time,
+			</if>
+			<if test="pStatus != null">
+				p_status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="pId != null">
+				#{pId,jdbcType=INTEGER},
+			</if>
+			<if test="pToken != null">
+				#{pToken,jdbcType=VARCHAR},
+			</if>
+			<if test="pUrl != null">
+				#{pUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="pDescription != null">
+				#{pDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="pType != null">
+				#{pType,jdbcType=CHAR},
+			</if>
+			<if test="pAddTime != null">
+				#{pAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="pStatus != null">
+				#{pStatus,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="cn.heckman.module.framework.pojo.TPermission">
+		update t_permission
+		<set>
+			<if test="pToken != null">
+				p_token = #{pToken,jdbcType=VARCHAR},
+			</if>
+			<if test="pUrl != null">
+				p_url = #{pUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="pDescription != null">
+				p_description = #{pDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="pType != null">
+				p_type = #{pType,jdbcType=CHAR},
+			</if>
+			<if test="pAddTime != null">
+				p_add_time = #{pAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="pStatus != null">
+				p_status = #{pStatus,jdbcType=CHAR},
+			</if>
+		</set>
+		where p_id = #{pId,jdbcType=INTEGER}
+	</update>
+
+
+</mapper>

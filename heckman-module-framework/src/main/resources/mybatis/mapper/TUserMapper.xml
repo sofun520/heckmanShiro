@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.heckman.module.framework.dao.TUserMapper">
+	<resultMap id="BaseResultMap" type="cn.heckman.module.framework.pojo.TUser">
+		<id column="u_id" property="uId" jdbcType="INTEGER" />
+		<result column="u_username" property="uUsername" jdbcType="VARCHAR" />
+		<result column="u_password" property="uPassword" jdbcType="VARCHAR" />
+		<result column="u_phone" property="uPhone" jdbcType="VARCHAR" />
+		<result column="u_add_time" property="uAddTime" jdbcType="TIMESTAMP" />
+		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+		<result column="u_status" property="uStatus" jdbcType="CHAR" />
+		
+		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
+			<id column="r_id" property="rId" jdbcType="INTEGER" />
+			<result column="r_name" property="rName" jdbcType="VARCHAR" />
+			<result column="r_description" property="rDescription"
+				jdbcType="VARCHAR" />
+			<result column="r_add_time" property="rAddTime" jdbcType="TIMESTAMP" />
+			<result column="r_status" property="rStatus" jdbcType="CHAR" />
+		</collection>
+		
+	</resultMap>
+
+	<resultMap id="getRolesByUsernameMap" type="cn.heckman.module.framework.pojo.TUser">
+		<id column="u_id" property="uId" jdbcType="INTEGER" />
+		<result column="u_username" property="uUsername" jdbcType="VARCHAR" />
+		<result column="u_phone" property="uPhone" jdbcType="VARCHAR" />
+		<result column="u_add_time" property="uAddTime" jdbcType="TIMESTAMP" />
+		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+		<result column="u_status" property="uStatus" jdbcType="CHAR" />
+
+		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
+			<id column="r_id" property="rId" jdbcType="INTEGER" />
+			<result column="r_name" property="rName" jdbcType="VARCHAR" />
+			<result column="r_description" property="rDescription"
+				jdbcType="VARCHAR" />
+			<result column="r_add_time" property="rAddTime" jdbcType="TIMESTAMP" />
+			<result column="r_status" property="rStatus" jdbcType="CHAR" />
+		</collection>
+	</resultMap>
+
+	<resultMap id="getPermissionsByUsernameMap" type="cn.heckman.module.framework.pojo.TPermission">
+		<id column="p_id" property="pId" jdbcType="INTEGER" />
+		<result column="p_token" property="pToken" jdbcType="VARCHAR" />
+		<result column="p_url" property="pUrl" jdbcType="VARCHAR" />
+		<result column="p_description" property="pDescription"
+			jdbcType="VARCHAR" />
+		<result column="p_add_time" property="pAddTime" jdbcType="TIMESTAMP" />
+		<result column="p_status" property="pStatus" jdbcType="CHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		u_id, u_username, u_password, u_phone, u_add_time, u_email,
+		u_status
+	</sql>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where u_id = #{uId,jdbcType=INTEGER}
+	</select>
+
+	<select id="query" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT
+			u.*, r.*
+		FROM
+			t_user u,
+			t_role r,
+			t_user_role ur
+		WHERE
+			ur.user_id = u.u_id
+		AND ur.role_id = r.r_id
+		<if test="uUsername != null and uUsername != ''">
+			AND u.u_username = #{uUsername}
+		</if>
+	</select>
+
+	<select id="getRolesByUsername" parameterType="java.lang.String"
+		resultMap="getRolesByUsernameMap">
+		SELECT
+		u.*, r.*
+		FROM
+		t_user u,
+		t_role r,
+		t_user_role ur
+		WHERE
+		u.u_id = ur.user_id
+		AND r.r_id = ur.role_id
+		AND u.u_username =
+		#{username}
+	</select>
+
+	<select id="getPermissionsByUsername" parameterType="java.lang.String"
+		resultMap="getPermissionsByUsernameMap">
+		SELECT
+		per.*
+		FROM
+		t_permission per,
+		t_role_permission rp,
+		t_role
+		r,
+		t_user_role ur,
+		t_user u
+		WHERE
+		rp.role_id = r.r_id
+		AND rp.permission_id
+		= per.p_id
+		AND ur.role_id = r.r_id
+		AND u.u_id = ur.user_id
+		AND
+		u.u_username = #{username}
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from t_user
+		where u_id =
+		#{uId,jdbcType=INTEGER}
+	</delete>
+
+
+	<insert id="insert" parameterType="cn.heckman.module.framework.pojo.TUser">
+		insert into t_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uId != null">
+				u_id,
+			</if>
+			<if test="uUsername != null">
+				u_username,
+			</if>
+			<if test="uPassword != null">
+				u_password,
+			</if>
+			<if test="uPhone != null">
+				u_phone,
+			</if>
+			<if test="uAddTime != null">
+				u_add_time,
+			</if>
+			<if test="uEmail != null">
+				u_email,
+			</if>
+			<if test="uStatus != null">
+				u_status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uId != null">
+				#{uId,jdbcType=INTEGER},
+			</if>
+			<if test="uUsername != null">
+				#{uUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="uPassword != null">
+				#{uPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="uPhone != null">
+				#{uPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="uAddTime != null">
+				#{uAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="uEmail != null">
+				#{uEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="uStatus != null">
+				#{uStatus,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="cn.heckman.module.framework.pojo.TUser">
+		update t_user
+		<set>
+			<if test="uUsername != null">
+				u_username = #{uUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="uPassword != null">
+				u_password = #{uPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="uPhone != null">
+				u_phone = #{uPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="uAddTime != null">
+				u_add_time = #{uAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="uEmail != null">
+				u_email = #{uEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="uStatus != null">
+				u_status = #{uStatus,jdbcType=CHAR},
+			</if>
+		</set>
+		where u_id = #{uId,jdbcType=INTEGER}
+	</update>
+
+</mapper>
