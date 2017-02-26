@@ -29,6 +29,11 @@ public class TPermission {
     private String pType;
 
     /**
+     * 
+     */
+    private Integer pParent;
+
+    /**
      * 添加时间
      */
     private Date pAddTime;
@@ -76,6 +81,14 @@ public class TPermission {
 
     public void setpType(String pType) {
         this.pType = pType == null ? null : pType.trim();
+    }
+
+    public Integer getpParent() {
+        return pParent;
+    }
+
+    public void setpParent(Integer pParent) {
+        this.pParent = pParent;
     }
 
     public Date getpAddTime() {

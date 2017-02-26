@@ -39,7 +39,7 @@
 		</collection>
 	</resultMap>
 
-	<resultMap id="getPermissionsByUsernameMap" type="cn.heckman.module.framework.pojo.TPermission">
+	<resultMap id="getPermissionsMap" type="cn.heckman.module.framework.pojo.TPermission">
 		<id column="p_id" property="pId" jdbcType="INTEGER" />
 		<result column="p_token" property="pToken" jdbcType="VARCHAR" />
 		<result column="p_url" property="pUrl" jdbcType="VARCHAR" />
@@ -91,8 +91,8 @@
 		#{username}
 	</select>
 
-	<select id="getPermissionsByUsername" parameterType="java.lang.String"
-		resultMap="getPermissionsByUsernameMap">
+	<select id="getPermissions" parameterType="java.util.Map"
+		resultMap="getPermissionsMap">
 		SELECT
 		per.*
 		FROM
@@ -109,7 +109,16 @@
 		AND ur.role_id = r.r_id
 		AND u.u_id = ur.user_id
 		AND
-		u.u_username = #{username}
+		u.u_username = #{uUsername}
+		<if test="pType != null and pType != ''">
+			AND per.p_type = #{pType}
+		</if>
+		<if test="pParent != null and pParent != ''">
+			AND per.p_parent = #{pParent}
+		</if>
+		<if test="pParent == null or pParent ==''">
+			AND per.p_parent is null
+		</if>
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">

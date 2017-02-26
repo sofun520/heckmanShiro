@@ -45,7 +45,7 @@ public class TUserServiceImpl implements TUserService {
 		return dao.getRolesByUsername(username);
 	}
 
-	public List<TPermission> getPermissionsByUsername(String string) {
-		return dao.getPermissionsByUsername(string);
+	public List<TPermission> getPermissions(Map<String, Object> map) {
+		return dao.getPermissions(map);
 	}
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -16,9 +15,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.heckman.module.framework.pojo.TPermission;
@@ -33,10 +30,6 @@ public class MyRealm extends AuthorizingRealm {
 	@Autowired
 	private TUserService userService;
 
-	// 这里因为没有调用后台，直接默认只有一个用户("luoguohui"，"123456")
-	// private static final String USER_NAME = "admin";
-	// private static final String PASSWORD = "123456";
-
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(
 			PrincipalCollection principals) {
@@ -45,8 +38,9 @@ public class MyRealm extends AuthorizingRealm {
 				.next();
 
 		TUser user = userService.getRolesByUsername(loginName);
-		List<TPermission> pers = userService
-				.getPermissionsByUsername(loginName);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("uUsername", user.getuUsername());
+		List<TPermission> pers = userService.getPermissions(map);
 
 		Set<String> roleNames = new HashSet<String>();
 		Set<String> permissions = new HashSet<String>();
@@ -77,7 +71,7 @@ public class MyRealm extends AuthorizingRealm {
 					+ JSONObject.toJSONString(token));
 
 			if (token.getUsername().equals(user.getuUsername())) {
-				setSession("userinfo", user);
+				ShiroSessionUtil.setSession("userinfo", user);
 				return new SimpleAuthenticationInfo(user.getuUsername(),
 						user.getuPassword(), getName());
 			} else {
@@ -85,24 +79,6 @@ public class MyRealm extends AuthorizingRealm {
 			}
 		} else {
 			throw new UnknownAccountException();
-		}
-	}
-
-	/**
-	 * 
-	 * 将一些数据放到ShiroSession中,以便于其它地方使用
-	 * 
-	 * @see 比如Controller,使用时直接用HttpSession.getAttribute(key)就可以取到
-	 */
-	private void setSession(Object key, Object value) {
-		Subject currentUser = SecurityUtils.getSubject();
-		if (null != currentUser) {
-			Session session = currentUser.getSession();
-			System.out
-					.println("Session默认超时时间为[" + session.getTimeout() + "]毫秒");
-			if (null != session) {
-				session.setAttribute(key, value);
-			}
 		}
 	}
 

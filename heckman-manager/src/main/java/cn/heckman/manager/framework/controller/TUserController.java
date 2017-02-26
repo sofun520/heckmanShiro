@@ -35,9 +35,8 @@ public class TUserController {
 			 * TUser user = service.getRolesByUsername("admin"); map.put("data",
 			 * user); System.out.println(JSONObject.toJSONString(user));
 			 */
-
-			List<TPermission> permissions = service
-					.getPermissionsByUsername("admin");
+			map.put("uUsername", "admin");
+			List<TPermission> permissions = service.getPermissions(map);
 			map.put("data", permissions);
 			System.out.println(JSONObject.toJSONString(permissions));
 

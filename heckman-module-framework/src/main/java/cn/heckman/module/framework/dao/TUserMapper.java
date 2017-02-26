@@ -1,6 +1,7 @@
 package cn.heckman.module.framework.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.heckman.common.interfaces.BaseMapper;
 import cn.heckman.module.framework.pojo.TPermission;
@@ -10,6 +11,6 @@ public interface TUserMapper extends BaseMapper<TUser> {
 
 	TUser getRolesByUsername(String username);
 
-	List<TPermission> getPermissionsByUsername(String string);
+	List<TPermission> getPermissions(Map<String, Object> map);
 
 }

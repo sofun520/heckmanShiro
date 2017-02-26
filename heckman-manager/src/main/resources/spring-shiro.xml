@@ -41,7 +41,7 @@
 			<value>
 				/login=anon
 				/getVerifyCodeImage=anon
-				/main.jsp=authc
+				/main/**=authc
 				/user/info**=authc
 				/admin/listUser**=authc,perms[admin:manage]
 			</value>

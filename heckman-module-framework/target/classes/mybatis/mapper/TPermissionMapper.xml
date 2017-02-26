@@ -8,13 +8,14 @@
 		<result column="p_description" property="pDescription"
 			jdbcType="VARCHAR" />
 		<result column="p_type" property="pType" jdbcType="CHAR" />
+		<result column="p_parent" property="pParent" jdbcType="INTEGER" />
 		<result column="p_add_time" property="pAddTime" jdbcType="TIMESTAMP" />
 		<result column="p_status" property="pStatus" jdbcType="CHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		p_id, p_token, p_url, p_description, p_type, p_add_time,
-		p_status
+		p_id, p_token, p_url, p_description, p_type, p_parent,
+		p_add_time, p_status
 	</sql>
 
 	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -36,6 +37,7 @@
 		p_id = #{pId,jdbcType=INTEGER}
 	</delete>
 
+
 	<insert id="insert" parameterType="cn.heckman.module.framework.pojo.TPermission">
 		insert into t_permission
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -53,6 +55,9 @@
 			</if>
 			<if test="pType != null">
 				p_type,
+			</if>
+			<if test="pParent != null">
+				p_parent,
 			</if>
 			<if test="pAddTime != null">
 				p_add_time,
@@ -76,6 +81,9 @@
 			</if>
 			<if test="pType != null">
 				#{pType,jdbcType=CHAR},
+			</if>
+			<if test="pParent != null">
+				#{pParent,jdbcType=INTEGER},
 			</if>
 			<if test="pAddTime != null">
 				#{pAddTime,jdbcType=TIMESTAMP},
@@ -101,6 +109,9 @@
 			<if test="pType != null">
 				p_type = #{pType,jdbcType=CHAR},
 			</if>
+			<if test="pParent != null">
+				p_parent = #{pParent,jdbcType=INTEGER},
+			</if>
 			<if test="pAddTime != null">
 				p_add_time = #{pAddTime,jdbcType=TIMESTAMP},
 			</if>
@@ -110,6 +121,5 @@
 		</set>
 		where p_id = #{pId,jdbcType=INTEGER}
 	</update>
-
 
 </mapper>
