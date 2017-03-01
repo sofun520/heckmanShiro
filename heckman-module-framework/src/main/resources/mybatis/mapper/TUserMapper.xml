@@ -9,6 +9,7 @@
 		<result column="u_add_time" property="uAddTime" jdbcType="TIMESTAMP" />
 		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
 		<result column="u_status" property="uStatus" jdbcType="CHAR" />
+		<result column="u_pic" property="uPic" jdbcType="VARCHAR" />
 		
 		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
 			<id column="r_id" property="rId" jdbcType="INTEGER" />
@@ -28,6 +29,7 @@
 		<result column="u_add_time" property="uAddTime" jdbcType="TIMESTAMP" />
 		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
 		<result column="u_status" property="uStatus" jdbcType="CHAR" />
+		<result column="u_pic" property="uPic" jdbcType="VARCHAR" />
 
 		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
 			<id column="r_id" property="rId" jdbcType="INTEGER" />
@@ -51,7 +53,7 @@
 
 	<sql id="Base_Column_List">
 		u_id, u_username, u_password, u_phone, u_add_time, u_email,
-		u_status
+		u_status, u_pic
 	</sql>
 
 	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -94,7 +96,7 @@
 	<select id="getPermissions" parameterType="java.util.Map"
 		resultMap="getPermissionsMap">
 		SELECT
-		per.*
+		DISTINCT(per.p_id),per.*
 		FROM
 		t_permission per,
 		t_role_permission rp,
@@ -108,8 +110,9 @@
 		= per.p_id
 		AND ur.role_id = r.r_id
 		AND u.u_id = ur.user_id
-		AND
-		u.u_username = #{uUsername}
+		<if test="uUsername != null and uUsername != ''">
+			AND u.u_username = #{uUsername}
+		</if>
 		<if test="pType != null and pType != ''">
 			AND per.p_type = #{pType}
 		</if>
@@ -152,6 +155,9 @@
 			<if test="uStatus != null">
 				u_status,
 			</if>
+			<if test="uPic != null">
+				u_pic,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uId != null">
@@ -174,6 +180,9 @@
 			</if>
 			<if test="uStatus != null">
 				#{uStatus,jdbcType=CHAR},
+			</if>
+			<if test="uPic != null">
+				#{uPic,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -198,6 +207,9 @@
 			</if>
 			<if test="uStatus != null">
 				u_status = #{uStatus,jdbcType=CHAR},
+			</if>
+			<if test="uPic != null">
+				u_pic = #{uPic,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where u_id = #{uId,jdbcType=INTEGER}

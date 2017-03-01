@@ -23,30 +23,72 @@ public class Constants {
 	/* 错误的验证码 */
 	public static String INCORRECT_VERIFYCODE = "10000006";
 
+	public static String INNER_ERROR = "10000500";
+
 	public static String SUCCESS = "0";
 
+	public static String FAILED = "1";
+
+	public static String INSERT_SUCCESS = "10100000";
+	public static String UPDATE_SUCCESS = "10200000";
+	public static String DELETE_SUCCESS = "10300000";
+
 	public static String getErrMsg(String errorCode) {
-		String a = null;
+		StringBuffer a = new StringBuffer("");
 		switch (errorCode) {
 		case "10000001":
-			a = "未知账户";
+			a = new StringBuffer("未知账户");
 			break;
 		case "10000002":
-			a = "错误的凭证";
+			a = new StringBuffer("错误的凭证");
 			break;
 		case "10000003":
-			a = "账户已锁定";
+			a = new StringBuffer("账户已锁定");
 			break;
 		case "10000004":
-			a = "错误次数过多";
+			a = new StringBuffer("错误次数过多");
 			break;
 		case "10000005":
-			a = "用户名或密码不正确";
+			a = new StringBuffer("用户名或密码不正确");
 			break;
 		case "10000006":
-			a = "错误的验证码";
+			a = new StringBuffer("错误的验证码");
+			break;
+		case "10000500":
+			a = new StringBuffer("系统内部错误");
+			break;
+		case "10100000":
+			a = new StringBuffer("新增成功");
+			break;
+		case "10200000":
+			a = new StringBuffer("更新成功");
+			break;
+		case "10300000":
+			a = new StringBuffer("删除成功");
+			break;
+		default:
+			a = new StringBuffer("");
 			break;
 		}
-		return a;
+		return a.toString();
+	}
+
+	public static String getSuccessMsg(String errorCode) {
+		StringBuffer a = new StringBuffer("");
+		switch (errorCode) {
+		case "10100000":
+			a = new StringBuffer("新增成功");
+			break;
+		case "10200000":
+			a = new StringBuffer("更新成功");
+			break;
+		case "10300000":
+			a = new StringBuffer("删除成功");
+			break;
+		default:
+			a = new StringBuffer("");
+			break;
+		}
+		return a.toString();
 	}
 }

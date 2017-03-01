@@ -40,9 +40,8 @@ public class TUser {
 	private String uStatus;
 
 	private List<TRole> roles;
-	
-	
-	
+
+	private String uPic;
 
 	public TUser() {
 		super();
@@ -52,6 +51,14 @@ public class TUser {
 		super();
 		this.uUsername = uUsername;
 		this.uPassword = uPassword;
+	}
+
+	public String getuPic() {
+		return uPic;
+	}
+
+	public void setuPic(String uPic) {
+		this.uPic = uPic;
 	}
 
 	public List<TRole> getRoles() {

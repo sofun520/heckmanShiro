@@ -11,7 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.heckman.manager.framework.common.Constants;
+import cn.heckman.manager.framework.common.ResponseData;
+import cn.heckman.manager.framework.common.ShiroSessionUtil;
 import cn.heckman.module.framework.pojo.TPermission;
+import cn.heckman.module.framework.pojo.TUser;
 import cn.heckman.module.framework.service.TUserService;
 
 import com.alibaba.fastjson.JSONObject;
@@ -62,6 +66,22 @@ public class TUserController {
 			ex.printStackTrace();
 		}
 		return map;
+	}
+
+	@RequestMapping("/userInfo")
+	@ResponseBody
+	public ResponseData userInfo() {
+		ResponseData rd = new ResponseData();
+		try {
+			TUser user = (TUser) ShiroSessionUtil.getSession("userinfo");
+			rd.setData(user);
+			rd.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			rd.setCode(Constants.FAILED);
+			rd.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return rd;
 	}
 
 }

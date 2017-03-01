@@ -3,7 +3,7 @@ package cn.heckman.common.interfaces;
 import java.util.List;
 import java.util.Map;
 
-public interface BaseMapper<T> {
+public interface BaseMapper<T>{
 
 	public int insert(T t);
 

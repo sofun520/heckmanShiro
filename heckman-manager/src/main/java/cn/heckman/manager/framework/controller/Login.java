@@ -64,87 +64,9 @@ public class Login {
 		ImageIO.write(bufferedImage, "JPEG", response.getOutputStream());
 	}
 
-	/**
-	 * 
-	 * 用户登录
-	 */
-
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(HttpServletRequest request) {
-
-		String resultPageURL = InternalResourceViewResolver.FORWARD_URL_PREFIX
-				+ "/";
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		// 获取HttpSession中的验证码
-		String verifyCode = (String) request.getSession().getAttribute(
-				"verifyCode");
-		// 获取用户请求表单中输入的验证码
-		String submitCode = WebUtils.getCleanParam(request, "verifyCode");
-		System.out.println("用户[" + username + "]登录时输入的验证码为[" + submitCode
-				+ "],HttpSession中的验证码为[" + verifyCode + "]");
-		if (StringUtils.isEmpty(submitCode)
-				|| !StringUtils.equals(verifyCode, submitCode.toLowerCase())) {
-			request.setAttribute("message_login", "验证码不正确");
-			return resultPageURL;
-		}
-
-		UsernamePasswordToken token = new UsernamePasswordToken(username,
-				MD5Util.md5(password));
-		System.out.println("========>" + JSONObject.toJSONString(token));
-		token.setRememberMe(true);
-		System.out.println("为了验证登录用户而封装的token为" + token.toString());
-
-		// 获取当前的Subject
-		Subject currentUser = SecurityUtils.getSubject();
-
-		try {
-			// 在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查
-			// 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
-			// 所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
-			System.out.println("对用户[" + username + "]进行登录验证..验证开始");
-			currentUser.login(token);
-			System.out.println("对用户[" + username + "]进行登录验证..验证通过");
-			resultPageURL = "main";
-		} catch (UnknownAccountException uae) {
-			System.out.println("对用户[" + username + "]进行登录验证..验证未通过,未知账户");
-			request.setAttribute("message_login", "未知账户");
-		} catch (IncorrectCredentialsException ice) {
-			System.out.println("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");
-			request.setAttribute("message_login", "密码不正确");
-		} catch (LockedAccountException lae) {
-			System.out.println("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");
-			request.setAttribute("message_login", "账户已锁定");
-		} catch (ExcessiveAttemptsException eae) {
-			System.out.println("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");
-			request.setAttribute("message_login", "用户名或密码错误次数过多");
-		} catch (AuthenticationException ae) {
-			// 通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景
-			System.out.println("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");
-			ae.printStackTrace();
-			request.setAttribute("message_login", "用户名或密码不正确");
-		}
-
-		// 验证是否登录成功
-		if (currentUser.isAuthenticated()) {
-
-			System.out.println("用户[" + username
-					+ "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
-		} else {
-			token.clear();
-		}
-		return resultPageURL;
-	}
-
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public ResponseData login2(@RequestBody TUser user) {
-		System.out.println(JSONObject.toJSONString(user));
-
-		// System.out.println(param.toJSONString());
-
-		// TUser user = JSONObject.toJavaObject(param, TUser.class);
-
 		ResponseData responseData = new ResponseData();
 		UsernamePasswordToken token = new UsernamePasswordToken(
 				user.getuUsername(), MD5Util.md5(user.getuPassword()));
@@ -223,11 +145,6 @@ public class Login {
 	public String logout(HttpServletRequest request) {
 		SecurityUtils.getSubject().logout();
 		return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "/";
-	}
-
-	@RequestMapping("/main")
-	public ModelAndView main() {
-		return new ModelAndView("main");
 	}
 
 }

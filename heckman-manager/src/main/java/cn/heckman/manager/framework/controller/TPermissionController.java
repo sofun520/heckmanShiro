@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,9 +71,67 @@ public class TPermissionController {
 		return responseData;
 	}
 
+	@RequestMapping(value = "/api/permission/save", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData savePermissionMenu(@RequestBody TPermission permission) {
+		ResponseData responseData = new ResponseData();
+		try {
+			if (permission.getpId() != null) {
+				perService.update(permission);
+				responseData.setMsg(Constants
+						.getSuccessMsg(Constants.UPDATE_SUCCESS));
+			} else {
+				perService.insert(permission);
+				responseData.setMsg(Constants
+						.getSuccessMsg(Constants.INSERT_SUCCESS));
+			}
+			responseData.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			responseData.setCode(Constants.FAILED);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return responseData;
+	}
+
+	@RequestMapping(value = "/api/permission/delete", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData deletePermissionMenu(@RequestBody TPermission permission) {
+		ResponseData responseData = new ResponseData();
+		try {
+			perService.delete(permission.getpId());
+			responseData.setCode(Constants.SUCCESS);
+			responseData.setMsg(Constants
+					.getSuccessMsg(Constants.DELETE_SUCCESS));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			responseData.setCode(Constants.FAILED);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return responseData;
+	}
+
 	@RequestMapping("/main/permission")
 	public ModelAndView showPage() {
 		return new ModelAndView("admin/permission");
+	}
+
+	@RequestMapping("/main/editPermission")
+	public ModelAndView editPermission(HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			int id = Integer.parseInt(request.getParameter("id"));
+			TPermission per = perService.find(id);
+
+			map.put("pType", per.getpType());
+			List<TPermission> parentPermissions = service.getPermissions(map);
+
+			map.put("permission", per);
+			map.put("parentPermissions", parentPermissions);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return new ModelAndView("admin/editPermission", map);
 	}
 
 }
