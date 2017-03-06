@@ -40,4 +40,11 @@ public class TRolePermissionServiceImpl implements TRolePermissionService {
 		return dao.count(map);
 	}
 
+	public void saveRolePermissions(Map<String, Object> map) {
+		dao.deleteRolePermissions(map);
+		if ("1".equals(map.get("flag"))) {
+			dao.saveRolePermissions(map);
+		}
+	}
+
 }

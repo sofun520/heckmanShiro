@@ -7,7 +7,7 @@
 	default-lazy-init="true">
 
 
-	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" /> 
+	<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
 
 	<!-- 继承自AuthorizingRealm的自定义Realm,即指定Shiro验证用户登录的类为自定义的ShiroDbRealm.java -->
 	<bean id="myRealm" class="cn.heckman.manager.framework.common.MyRealm" />
@@ -42,7 +42,8 @@
 				/login=anon
 				/getVerifyCodeImage=anon
 				/admin/**=authc
-				/main/**=authc
+				/api/**=authc
+				/home/**=authc
 				/user/info**=authc
 				/admin/listUser**=authc,perms[admin:manage]
 			</value>

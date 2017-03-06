@@ -29,6 +29,21 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_permission
+		where 1=1
+		<if test="pType != null and pType != ''">
+			and p_type = #{pType}
+		</if>
+		<if test="pParent != null and pParent != ''">
+			and p_parent = #{pParent}
+		</if>
+		<if test="flag == 1">
+			<if test="pParent == null or pParent == ''">
+				and p_parent is null
+			</if>
+		</if>
+		<if test="pDescription != null and pDescription != ''">
+			and p_description like '%${pDescription}%'
+		</if>
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">
@@ -121,5 +136,40 @@
 		</set>
 		where p_id = #{pId,jdbcType=INTEGER}
 	</update>
+
+	<select id="userPermissionsTree" parameterType="java.util.Map"
+		resultType="cn.heckman.module.framework.pojo.RolePermissionTree">
+		SELECT
+		tp.p_id AS id,
+		(
+		CASE
+		WHEN tp.p_parent IS NULL THEN
+		'0'
+		WHEN tp.p_parent IS NOT NULL THEN
+		tp.p_parent
+		END
+		) AS pId,
+		CASE when tp.p_type='1' then CONCAT(tp.p_description,' (菜单)')
+     when tp.p_type='2' then CONCAT(tp.p_description,' (操作)')
+		END
+		AS name,
+		(
+		CASE
+		WHEN trp.id IS NULL THEN
+		'false'
+		WHEN
+		trp.id IS NOT NULL THEN
+		'true'
+		END
+		) AS checked
+		FROM
+		t_permission tp
+		LEFT
+		OUTER JOIN t_role_permission trp ON tp.p_id =
+		trp.permission_id
+		AND
+		trp.role_id = #{roleId}
+	</select>
+	
 
 </mapper>

@@ -25,6 +25,10 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_role
+		where 1=1
+		<if test="rDescription != null and rDescription != ''">
+			and r_description like '%${rDescription}%'
+		</if>
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">
@@ -90,5 +94,7 @@
 		</set>
 		where r_id = #{rId,jdbcType=INTEGER}
 	</update>
+
+
 
 </mapper>

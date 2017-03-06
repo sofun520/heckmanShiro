@@ -1,6 +1,7 @@
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\Constants.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\VerifyCodeUtil.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\TRoleController.java
+D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\WebController.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\MyRealm.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\ResponseData.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\Login.java

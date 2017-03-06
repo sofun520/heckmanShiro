@@ -106,4 +106,14 @@ public class TPermission {
     public void setpStatus(String pStatus) {
         this.pStatus = pStatus == null ? null : pStatus.trim();
     }
+
+	@Override
+	public String toString() {
+		return "TPermission [pId=" + pId + ", pToken=" + pToken + ", pUrl="
+				+ pUrl + ", pDescription=" + pDescription + ", pType=" + pType
+				+ ", pParent=" + pParent + ", pAddTime=" + pAddTime
+				+ ", pStatus=" + pStatus + "]";
+	}
+    
+    
 }

@@ -81,4 +81,19 @@
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 
+	<delete id="deleteUserRole" parameterType="java.util.Map">
+		delete from
+		t_user_role where user_id = #{uId}
+	</delete>
+	
+	<insert id="saveUserRole" parameterType="java.util.Map">
+		insert into t_user_role (user_id,role_id) 
+		values
+		<trim suffixOverrides=",">
+			<foreach collection="userRoles" item="ur">
+				(#{uId},#{ur}),
+			</foreach>
+		</trim>
+	</insert>
+
 </mapper>

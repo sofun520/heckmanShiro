@@ -1,28 +1,34 @@
 package cn.heckman.manager.framework.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import cn.heckman.manager.framework.common.Constants;
 import cn.heckman.manager.framework.common.ResponseData;
 import cn.heckman.manager.framework.common.ShiroSessionUtil;
+import cn.heckman.module.framework.pojo.RolePermissionTree;
 import cn.heckman.module.framework.pojo.TPermission;
+import cn.heckman.module.framework.pojo.TRole;
 import cn.heckman.module.framework.pojo.TUser;
 import cn.heckman.module.framework.service.TPermissionService;
+import cn.heckman.module.framework.service.TRolePermissionService;
 import cn.heckman.module.framework.service.TUserService;
 
+import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+
 @Controller
+@RequestMapping("/api/permission")
 public class TPermissionController {
 
 	@Autowired
@@ -31,16 +37,31 @@ public class TPermissionController {
 	@Autowired
 	private TPermissionService perService;
 
-	@RequestMapping(value = "/permission", method = RequestMethod.POST)
+	@Autowired
+	private TRolePermissionService rpService;
+
+	private Logger logger = Logger.getLogger(TPermissionController.class);
+
+	private static String PERMISSION_MENUS_TYPE = "1";
+	private static String PERMISSION_PERS_TYPE = "2";
+
+	/**
+	 * 拉取用户菜单
+	 * 
+	 * @param permission
+	 * @return
+	 */
+	@RequestMapping(value = "/getUserMenus", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData queryUserPermissionMenu(
-			@RequestBody TPermission permission) {
+	public ResponseData getUserMenus(@RequestBody TPermission permission) {
+		System.out.println(permission);
 		ResponseData responseData = new ResponseData();
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			TUser user = (TUser) ShiroSessionUtil.getSession("userinfo");
 			map.put("uUsername", user.getuUsername());
-			map.put("pType", permission.getpType());
+			map.put("pType", PERMISSION_MENUS_TYPE);
+			map.put("flag", 0);
 			map.put("pParent", permission.getpParent());
 			List<TPermission> list = service.getPermissions(map);
 			responseData.setData(list);
@@ -51,31 +72,91 @@ public class TPermissionController {
 		return responseData;
 	}
 
-	@RequestMapping("/test")
-	public ModelAndView test() {
-		return new ModelAndView("test");
-	}
-
-	@RequestMapping(value = "/api/permission/query", method = RequestMethod.POST)
+	/**
+	 * 拉取用户permissions
+	 * 
+	 * @param permission
+	 * @return
+	 */
+	@RequestMapping(value = "/getUserPermission", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseData queryPermissionMenu(@RequestBody TPermission permission) {
+	public ResponseData queryUserPermissionMenu(
+			@RequestBody TPermission permission) {
 		ResponseData responseData = new ResponseData();
 		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			TUser user = (TUser) ShiroSessionUtil.getSession("userinfo");
+			map.put("uUsername", user.getuUsername());
+			// map.put("pType", PERMISSION_PERS_TYPE);
+			map.put("flag", 1);
+			List<TPermission> list = service.getPermissions(map);
+			responseData.setData(list);
+			responseData.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			//ex.printStackTrace();
+			logger.error(ex);
+			responseData.setCode(Constants.INNER_ERROR);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return responseData;
+	}
+
+	/**
+	 * permissions展示页
+	 * 
+	 * @param permission
+	 * @return
+	 */
+	@RequestMapping(value = "/query", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData queryPermissionMenu(@RequestBody TPermission permission) {
+		System.out.println(JSONObject.toJSONString(permission));
+		ResponseData responseData = new ResponseData();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("pDescription", permission.getpDescription());
 		try {
 			List<TPermission> list = perService.query(map);
 			responseData.setData(list);
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
+			logger.error(ex);
+			responseData.setCode(Constants.INNER_ERROR);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
 		}
 		return responseData;
 	}
 
-	@RequestMapping(value = "/api/permission/save", method = RequestMethod.POST)
+	@RequestMapping(value = "/find", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData find(@RequestBody TPermission permission) {
+		System.out.println(JSONObject.toJSONString(permission));
+		ResponseData responseData = new ResponseData();
+		try {
+			TPermission per = perService.find(permission.getpId());
+			responseData.setData(per);
+			responseData.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			//ex.printStackTrace();
+			logger.error(ex);
+			responseData.setCode(Constants.INNER_ERROR);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return responseData;
+	}
+
+	/**
+	 * permission新增或修改接口
+	 * 
+	 * @param permission
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData savePermissionMenu(@RequestBody TPermission permission) {
 		ResponseData responseData = new ResponseData();
 		try {
+			permission.setpAddTime(new Date());
 			if (permission.getpId() != null) {
 				perService.update(permission);
 				responseData.setMsg(Constants
@@ -87,14 +168,21 @@ public class TPermissionController {
 			}
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
+			logger.error(ex);
 			responseData.setCode(Constants.FAILED);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
 		}
 		return responseData;
 	}
 
-	@RequestMapping(value = "/api/permission/delete", method = RequestMethod.POST)
+	/**
+	 * permission删除接口
+	 * 
+	 * @param permission
+	 * @return
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData deletePermissionMenu(@RequestBody TPermission permission) {
 		ResponseData responseData = new ResponseData();
@@ -104,34 +192,60 @@ public class TPermissionController {
 			responseData.setMsg(Constants
 					.getSuccessMsg(Constants.DELETE_SUCCESS));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
+			logger.error(ex);
 			responseData.setCode(Constants.FAILED);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
 		}
 		return responseData;
 	}
 
-	@RequestMapping("/main/permission")
-	public ModelAndView showPage() {
-		return new ModelAndView("admin/permission");
-	}
-
-	@RequestMapping("/main/editPermission")
-	public ModelAndView editPermission(HttpServletRequest request) {
+	@RequestMapping("/rolePermissionTree")
+	@ResponseBody
+	public ResponseData rolePermissionTree(@RequestBody TRole role) {
+		ResponseData responseData = new ResponseData();
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			int id = Integer.parseInt(request.getParameter("id"));
-			TPermission per = perService.find(id);
-
-			map.put("pType", per.getpType());
-			List<TPermission> parentPermissions = service.getPermissions(map);
-
-			map.put("permission", per);
-			map.put("parentPermissions", parentPermissions);
+			if (role != null) {
+				map.put("roleId", role.getrId());
+			}
+			List<RolePermissionTree> list = perService.userPermissionsTree(map);
+			responseData.setCode(Constants.SUCCESS);
+			responseData.setData(list);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			// ex.printStackTrace();
+			logger.error(ex);
+			responseData.setCode(Constants.INNER_ERROR);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
 		}
-		return new ModelAndView("admin/editPermission", map);
+		return responseData;
+	}
+
+	@RequestMapping(value = "/saveRolePermission", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData saveRolePermission(@RequestBody TPermission permission) {
+		ResponseData responseData = new ResponseData();
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			String permissionIds = permission.getpDescription();
+			int roleId = permission.getpId();
+			if (!StringUtils.isEmpty(permissionIds)) {
+				String[] a = permissionIds.split(",");
+				map.put("permissionIds", a);
+				map.put("flag", "1");
+			} else {
+				map.put("flag", "0");
+			}
+			map.put("roleId", roleId);
+			rpService.saveRolePermissions(map);
+			responseData.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			// ex.printStackTrace();
+			logger.error(ex);
+			responseData.setCode(Constants.INNER_ERROR);
+			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return responseData;
 	}
 
 }

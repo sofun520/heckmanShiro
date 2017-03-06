@@ -56,6 +56,7 @@
 body {
 	font-size: 12px;
 }
+
 </style>
 </head>
 <body>
@@ -86,19 +87,24 @@ body {
 					</div>
 				</div>
 				<div class="form-group" style="padding-right: 10px;">
+					<label for="search_aName" class="col-sm-1 control-label">菜单URL</label>
+					<div class="col-sm-3">
+						<input type="text" name="pUrl" value="${permission.pUrl}"
+							class="form-control input-sm" placeholder="">
+					</div>
 					<label for="search_aName" class="col-sm-1 control-label">权限类型</label>
 					<div class="col-sm-3">
-						<select class="form-control" name="pType">
+						<select class="form-control input-sm" name="pType">
 							<option value="1" <c:if test="${permission.pType==1}">selected="selected"</c:if>>菜单</option>
 							<option value="2" <c:if test="${permission.pType==2}">selected="selected"</c:if>>操作</option>
 						</select>
 					</div>
-					<c:if test="${!empty permission.pParent}">
+					<c:if test="${!empty p_Parent}">
 						<label for="search_aName" class="col-sm-1 control-label">父权限</label>
 						<div class="col-sm-3">
-							<select class="form-control">
+							<select class="form-control input-sm" name="pParent">
 								<c:forEach items="${parentPermissions}" var="pp">
-									<option value="${pp.pParent}">${pp.pDescription}</option>
+									<option <c:if test="${p_Parent == pp.pId}">selected="selected"</c:if> value="${pp.pId}">${pp.pDescription}</option>
 								</c:forEach>
 							</select>
 						</div>
@@ -118,10 +124,11 @@ body {
 	</div>
 	<script type="text/javascript">
 		angular.module('myApp', []).controller('permissionCtrl',
-				["$scope", "$http",function($scope, $http) {
+				["$scope", "$http","myService",function($scope, $http,myService) {
 
 			$scope.init = function() {
 			}
+			
 			
 			$scope.submit = function(){
 				var data={};
@@ -129,7 +136,36 @@ body {
 					data[x.name]=x.value;
 				});
 				
-				$http({
+				myService.savePermisson(JSON.stringify(data),function(error,data){
+					if(!error){
+						console.log(data);
+						if(data.code==0){
+							/* $.alert({
+							    title: '系统提示',
+							    content: data.msg,
+							    confirm: function(){
+							    	alert('sdf');
+							    	window.history.back();
+							    }
+							}); */
+							$.alert('Confirmed!');
+							window.history.back();
+							/* $.alert({
+							    title: 'Alert!',
+							    content: 'Simple alert!',
+							    confirm: function(){
+							        $.alert('Confirmed!'); // shorthand.
+							    }
+							}); */
+						}else{
+							$.alert({
+							    title: '系统提示',
+							    content: data.msg
+							});
+						}
+					}
+				});
+				/* $http({
 					method : "post", 
 					url : "${basePath}/api/permission/save",
 					data : JSON.stringify(data),
@@ -152,10 +188,27 @@ body {
 						    content: data.msg
 						});
 					}
-				})
+				}) */
 			}
 			
-		}]);
+		}]).factory('myService',function myService($http){
+			return{
+				savePermisson:function savePermisson(query,callback){
+					$http({
+						method : "post", 
+						url : "${basePath}/api/permission/save",
+						data : query,
+						headers : {
+							'Content-Type' : 'application/json;charset=UTF-8'
+						}
+					}).success(function(data) {
+						callback(null, data);
+					}).error(function (e) {  
+			            callback(e);  
+			        });
+				}
+			}
+		});
 	</script>
 </body>
 </html>

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.heckman.module.framework.dao.TPermissionMapper;
+import cn.heckman.module.framework.pojo.RolePermissionTree;
 import cn.heckman.module.framework.pojo.TPermission;
 import cn.heckman.module.framework.service.TPermissionService;
 
@@ -38,6 +39,10 @@ public class TPermissionServiceImpl implements TPermissionService {
 
 	public int count(Map<String, Object> map) {
 		return dao.count(map);
+	}
+
+	public List<RolePermissionTree> userPermissionsTree(Map<String, Object> map) {
+		return dao.userPermissionsTree(map);
 	}
 
 }

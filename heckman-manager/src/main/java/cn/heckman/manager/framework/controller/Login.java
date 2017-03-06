@@ -17,14 +17,11 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import cn.heckman.manager.framework.common.Constants;
 import cn.heckman.manager.framework.common.MD5Util;
@@ -34,7 +31,6 @@ import cn.heckman.manager.framework.common.VerifyCodeUtil;
 import cn.heckman.module.framework.pojo.TUser;
 
 import com.alibaba.druid.util.StringUtils;
-import com.alibaba.fastjson.JSONObject;
 
 @Controller
 public class Login {
@@ -142,9 +138,16 @@ public class Login {
 	 */
 
 	@RequestMapping("/logout")
-	public String logout(HttpServletRequest request) {
-		SecurityUtils.getSubject().logout();
-		return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "/";
+	@ResponseBody
+	public ResponseData logout(HttpServletRequest request) {
+		ResponseData rd = new ResponseData();
+		try {
+			SecurityUtils.getSubject().logout();
+			rd.setCode(Constants.SUCCESS);
+			rd.setMsg(Constants.getSuccessMsg(Constants.LOGOUT_SUCCESS));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return rd;
 	}
-
 }

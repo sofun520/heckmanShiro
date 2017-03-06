@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.heckman.module.framework.dao.TRoleMapper;
+import cn.heckman.module.framework.pojo.RolePermissionTree;
 import cn.heckman.module.framework.pojo.TRole;
 import cn.heckman.module.framework.service.TRoleService;
 

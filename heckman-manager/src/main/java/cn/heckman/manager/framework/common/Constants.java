@@ -29,10 +29,6 @@ public class Constants {
 
 	public static String FAILED = "1";
 
-	public static String INSERT_SUCCESS = "10100000";
-	public static String UPDATE_SUCCESS = "10200000";
-	public static String DELETE_SUCCESS = "10300000";
-
 	public static String getErrMsg(String errorCode) {
 		StringBuffer a = new StringBuffer("");
 		switch (errorCode) {
@@ -73,17 +69,25 @@ public class Constants {
 		return a.toString();
 	}
 
+	public static String INSERT_SUCCESS = "10001001";
+	public static String UPDATE_SUCCESS = "10001002";
+	public static String DELETE_SUCCESS = "10001003";
+	public static String LOGOUT_SUCCESS = "10001004";
+
 	public static String getSuccessMsg(String errorCode) {
 		StringBuffer a = new StringBuffer("");
 		switch (errorCode) {
-		case "10100000":
+		case "10001001":
 			a = new StringBuffer("新增成功");
 			break;
-		case "10200000":
+		case "10001002":
 			a = new StringBuffer("更新成功");
 			break;
-		case "10300000":
+		case "10001003":
 			a = new StringBuffer("删除成功");
+			break;
+		case "10001004":
+			a = new StringBuffer("注销成功");
 			break;
 		default:
 			a = new StringBuffer("");

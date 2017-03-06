@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.heckman.module.framework.dao.TUserMapper">
+	<resultMap id="BaseResultMap1" type="cn.heckman.module.framework.pojo.TUser">
+		<id column="u_id" property="uId" jdbcType="INTEGER" />
+		<result column="u_username" property="uUsername" jdbcType="VARCHAR" />
+		<result column="u_password" property="uPassword" jdbcType="VARCHAR" />
+		<result column="u_phone" property="uPhone" jdbcType="VARCHAR" />
+		<result column="u_add_time" property="uAddTime" jdbcType="TIMESTAMP" />
+		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+		<result column="u_status" property="uStatus" jdbcType="CHAR" />
+		<result column="u_pic" property="uPic" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<resultMap id="BaseResultMap" type="cn.heckman.module.framework.pojo.TUser">
 		<id column="u_id" property="uId" jdbcType="INTEGER" />
 		<result column="u_username" property="uUsername" jdbcType="VARCHAR" />
@@ -10,8 +21,9 @@
 		<result column="u_email" property="uEmail" jdbcType="VARCHAR" />
 		<result column="u_status" property="uStatus" jdbcType="CHAR" />
 		<result column="u_pic" property="uPic" jdbcType="VARCHAR" />
-		
-		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
+
+		<collection property="roles"
+			ofType="cn.heckman.module.framework.pojo.TRole">
 			<id column="r_id" property="rId" jdbcType="INTEGER" />
 			<result column="r_name" property="rName" jdbcType="VARCHAR" />
 			<result column="r_description" property="rDescription"
@@ -19,7 +31,7 @@
 			<result column="r_add_time" property="rAddTime" jdbcType="TIMESTAMP" />
 			<result column="r_status" property="rStatus" jdbcType="CHAR" />
 		</collection>
-		
+
 	</resultMap>
 
 	<resultMap id="getRolesByUsernameMap" type="cn.heckman.module.framework.pojo.TUser">
@@ -31,7 +43,8 @@
 		<result column="u_status" property="uStatus" jdbcType="CHAR" />
 		<result column="u_pic" property="uPic" jdbcType="VARCHAR" />
 
-		<collection property="roles" ofType="cn.heckman.module.framework.pojo.TRole">
+		<collection property="roles"
+			ofType="cn.heckman.module.framework.pojo.TRole">
 			<id column="r_id" property="rId" jdbcType="INTEGER" />
 			<result column="r_name" property="rName" jdbcType="VARCHAR" />
 			<result column="r_description" property="rDescription"
@@ -65,16 +78,34 @@
 
 	<select id="query" resultMap="BaseResultMap" parameterType="java.util.Map">
 		SELECT
-			u.*, r.*
+		u.*, r.*
 		FROM
-			t_user u,
-			t_role r,
-			t_user_role ur
+		t_user u,
+		t_role r,
+		t_user_role ur
 		WHERE
-			ur.user_id = u.u_id
+		ur.user_id = u.u_id
 		AND ur.role_id = r.r_id
 		<if test="uUsername != null and uUsername != ''">
 			AND u.u_username = #{uUsername}
+		</if>
+	</select>
+
+	<select id="queryPage" resultMap="BaseResultMap1" parameterType="java.util.Map">
+		SELECT
+		*
+		FROM
+		t_user
+		WHERE
+		1=1
+		<if test="uUsername != null and uUsername != ''">
+			AND u_username like '%${uUsername}%'
+		</if>
+		<if test="uPhone != null and uPhone != ''">
+			AND u_phone like '%${uPhone}%'
+		</if>
+		<if test="uEmail != null and uEmail != ''">
+			AND u_email like '%${uEmail}%'
 		</if>
 	</select>
 
@@ -99,28 +130,33 @@
 		DISTINCT(per.p_id),per.*
 		FROM
 		t_permission per,
-		t_role_permission rp,
+		t_role_permission
+		rp,
 		t_role
 		r,
 		t_user_role ur,
 		t_user u
 		WHERE
 		rp.role_id = r.r_id
-		AND rp.permission_id
+		AND
+		rp.permission_id
 		= per.p_id
 		AND ur.role_id = r.r_id
-		AND u.u_id = ur.user_id
+		AND u.u_id =
+		ur.user_id
 		<if test="uUsername != null and uUsername != ''">
 			AND u.u_username = #{uUsername}
 		</if>
 		<if test="pType != null and pType != ''">
 			AND per.p_type = #{pType}
 		</if>
-		<if test="pParent != null and pParent != ''">
-			AND per.p_parent = #{pParent}
-		</if>
-		<if test="pParent == null or pParent ==''">
-			AND per.p_parent is null
+		<if test="flag !=1 ">
+			<if test="pParent != null and pParent != ''">
+				AND per.p_parent = #{pParent}
+			</if>
+			<if test="pParent == null or pParent ==''">
+				AND per.p_parent is null
+			</if>
 		</if>
 	</select>
 
@@ -214,5 +250,23 @@
 		</set>
 		where u_id = #{uId,jdbcType=INTEGER}
 	</update>
+
+	<select id="userRoleTree" parameterType="java.util.Map"
+		resultType="cn.heckman.module.framework.pojo.UserRoleTree">
+		SELECT
+		tr.r_id as id,'' as pId,tr.r_name as code,tr.r_description as name, CASE
+		WHEN
+		tur.id IS NULL THEN
+		'false'
+		WHEN tur.id IS NOT NULL THEN
+		'true'
+		END AS checked
+		FROM
+		`t_role` tr
+		LEFT OUTER JOIN t_user_role tur ON tr.r_id = tur.role_id
+		AND
+		tur.user_id = #{userId}
+		ORDER BY id
+	</select>
 
 </mapper>
