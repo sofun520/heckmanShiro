@@ -71,7 +71,7 @@ body{
 				<div class="col-sm-4">
 					<button type="button" ng-click="loadUserList()" class="btn btn-info btn-sm">查询</button>
 					<button type="button" ng-click="reset()" class="btn btn-info btn-sm">清空</button>
-					<button type="button" ng-click="addRole()" class="btn btn-info btn-sm">新增</button>
+					<button type="button" ng-click="addUser()" class="btn btn-info btn-sm">新增</button>
 				</div>
 			</div>
 			<!-- /.box-footer -->
@@ -101,7 +101,7 @@ body{
 							<td>{{x.uAddTime | date:'yyyy-MM-dd'}}</td>
 							<td align="center"><a href="javascript:void(0)"
 								ng-click="delRole(x.uId)">删除</a>&nbsp;&nbsp;&nbsp;&nbsp;<a
-								href="javascript:void(0)" ng-click="editRole(x.uId)">修改</a>
+								href="javascript:void(0)" ng-click="editUser(x.uId)">修改</a>
 								&nbsp;&nbsp;<a href="javascript:void(0)" ng-click="assignMenu(x.uId)">分配角色</a>
 								</td>
 								
@@ -110,16 +110,71 @@ body{
 				</table>
 			</div>
 			<div class="col-sm-5">
-				<table class="table table-bordered table-striped">
-					<tr>
-						<td height="400">
-							<ul id="treeDemo" class="ztree"></ul>
-							<br>
-							<ul tree class="ztree" ng-model="selectNode"></ul> 
-						</td>
-					</tr>
-				</table>
-				<a href="javascript:void(0)" class="btn btn-info btn-sm" ng-click="save()">保存</a>
+				<div ng-if="assignMenuShow">
+					<table class="table table-bordered table-striped">
+						<tr><td>分配角色</td></tr>
+						<tr>
+							<td height="400">
+								<ul id="treeDemo" class="ztree"></ul>
+								<br>
+								<ul tree class="ztree" ng-model="selectNode"></ul> 
+							</td>
+						</tr>
+					</table>
+					<a href="javascript:void(0)" class="btn btn-info btn-sm" ng-click="save()">保存</a>
+				</div>
+				<div ng-if="editUserShow">
+					<table class="table table-bordered table-striped">
+						<tr><td>{{addOrEditFlag?'新增用户':'修改用户信息'}}</td></tr>
+						<tr>
+							<td>
+								<form class="form-horizontal" id="myForm"
+						method="post">
+						<div class="box-body">
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">用户ID</label>
+								<div class="col-sm-9">
+									<input type="hidden" ng-model="userInfo.uId"
+										class="form-control input-sm" placeholder="">
+									<input type="text" readonly="readonly" ng-model="userInfo.uId"
+										class="form-control input-sm" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">用户名</label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="userInfo.uUsername" required ng-readonly="usernameReadOnly"
+										class="form-control input-sm" id="search_aName" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">手机号码</label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="userInfo.uPhone" required
+										class="form-control input-sm" id="search_aName" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">邮箱地址</label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="userInfo.uEmail" required
+										class="form-control input-sm" id="search_aName" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label"></label>
+								<div class="col-sm-9">
+									<button type="button" ng-click="submit()" class="btn btn-info btn-sm">保存</button>
+									<button type="button" ng-click="reset()" class="btn btn-info btn-sm">重置</button>
+								</div>
+							</div>
+						</div>
+						<!-- /.box-footer -->
+					</form>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 <script type="text/javascript">
 </script>
@@ -181,6 +236,34 @@ angular.module('myApp', []).factory('myService',function myService($http){
 			}).error(function (e) {  
 	            callback(e);  
 	        });
+		},
+		findUser:function findUser(query,callback){
+			$http({
+				method : "post",
+				url : "../api/user/find",
+				data : query,
+				headers : {
+					'Content-Type' : 'application/json;charset=UTF-8'
+				}
+			}).success(function(data) {
+				callback(null, data);
+			}).error(function (e) {  
+	            callback(e);  
+	        });
+		},
+		saveUser:function saveUser(query,callback){
+			$http({
+				method : "post",
+				url : "../api/user/save",
+				data : query,
+				headers : {
+					'Content-Type' : 'application/json;charset=UTF-8'
+				}
+			}).success(function(data) {
+				callback(null, data);
+			}).error(function (e) {  
+	            callback(e);  
+	        });
 		}
 	}
 }).controller('roleCtrl',["myService","$scope", "$http",function(myService,$scope, $http){
@@ -189,6 +272,10 @@ angular.module('myApp', []).factory('myService',function myService($http){
     treeObj.expandAll(true); */
     
     $scope.init = function(){
+    	$scope.assignMenuShow = false;
+    	$scope.editUserShow = true;
+    	$scope.addOrEditFlag = true;
+    
 		$scope.roleId = 0;
 		$scope.loadUserList();
 	}
@@ -238,7 +325,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.addRole = function(id){
-		window.location.href='editRole';
+		//window.location.href='editRole';
 	}
 	
 	$scope.editRole = function(id){
@@ -281,6 +368,9 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	
 	var treeObj;
 	$scope.assignMenu = function(id){
+		$scope.assignMenuShow = true;
+    	$scope.editUserShow = false;
+	
 		$scope.roleId = id;
 		
 		$scope.setting = {
@@ -340,6 +430,48 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		}else{
 			$.alert('请为用户勾选角色！');
 		}
+	}
+	
+	$scope.addUser = function(){
+		$scope.assignMenuShow = false;
+    	$scope.editUserShow = true;
+    	$scope.addOrEditFlag = true;
+    	$scope.usernameReadOnly = false;
+    	$scope.userInfo = {};
+	}
+	
+	$scope.editUser = function(id){
+		$scope.usernameReadOnly = true;
+		$scope.assignMenuShow = false;
+    	$scope.editUserShow = true;
+    	$scope.addOrEditFlag = false;
+		$scope.userInfo = {};
+		var param = JSON.stringify({"uId":id});
+		myService.findUser(param,function(error,data){
+			if(!error){
+				console.log(data);
+				if(data.code==0){
+					$scope.userInfo = data.data;
+				}else{
+					$.alert({title: '系统提示',content: data.msg});
+				}
+			}
+		});
+	}
+	
+	
+	$scope.submit = function(){
+		var param = JSON.stringify($scope.userInfo);
+		myService.saveUser(param,function(error,data){
+			if(!error){
+				console.log(data);
+				if(data.code==0){
+					window.location.reload();
+				}else{
+					$.alert({title: '系统提示',content: data.msg});
+				}
+			}
+		});
 	}
 	
 }]).directive('tree',function(){ 

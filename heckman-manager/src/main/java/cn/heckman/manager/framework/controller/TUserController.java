@@ -98,6 +98,29 @@ public class TUserController {
 		return rd;
 	}
 
+	@RequestMapping("/find")
+	@ResponseBody
+	public ResponseData find(@RequestBody TUser user) {
+		ResponseData rd = new ResponseData();
+		try {
+			if (user != null && user.getuId() != null) {
+				int id = user.getuId();
+				TUser user1 = service.find(id);
+				rd.setData(user1);
+				rd.setCode(Constants.SUCCESS);
+			} else {
+				rd.setCode(Constants.QUERY_NULL);
+				rd.setMsg(Constants.getSuccessMsg(Constants.QUERY_NULL));
+			}
+		} catch (Exception ex) {
+			// ex.printStackTrace();
+			logger.error(ex);
+			rd.setCode(Constants.FAILED);
+			rd.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return rd;
+	}
+
 	@RequestMapping("/userInfo")
 	@ResponseBody
 	public ResponseData userInfo() {

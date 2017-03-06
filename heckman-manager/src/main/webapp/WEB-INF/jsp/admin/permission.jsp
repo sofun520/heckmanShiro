@@ -55,6 +55,7 @@ body{
 		<div class="box-body">
 			<div class="col-sm-6">
 				<table class="table table-bordered table-striped">
+					<tr><td>权限菜单树</td></tr>
 					<tr>
 						<td height="500">
 							<ul tree class="ztree" ng-model="selectNode"></ul>
@@ -63,7 +64,11 @@ body{
 				</table>
 			</div>
 			<div class="col-sm-6">
-				<form class="form-horizontal ng-pristine ng-valid"
+				<table class="table table-bordered table-striped">
+					<tr><td>{{addOrEdit?'权限菜单信息新增':'权限菜单信息修改'}}</td></tr>
+					<tr>
+						<td>
+							<form class="form-horizontal ng-pristine ng-valid"
 			action="#" method="post" id="myForm">
 			<div class="box-body">
 				<div class="form-group" style="padding-right: 10px;">
@@ -119,6 +124,10 @@ body{
 			</div>
 			<!-- /.box-footer -->
 		</form>
+						
+						</td>
+					</tr>
+				</table>
 			<!-- <pre>{{selectNode|json}}</pre> -->
 							<pre>{{per|json}}</pre>
 			</div>
@@ -190,7 +199,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 }).controller('roleCtrl',["myService","$scope", "$http",function(myService,$scope, $http){
     
     $scope.init = function(){
-		
+    	$scope.addOrEdit = true;
 	}
 	
 	$scope.loadRoleList = function(){
@@ -215,6 +224,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.addSubLevel = function(){
+		$scope.addOrEdit = true;
 		if(typeof($scope.pParent) == "undefined"){
 			$.alert('请选择父级');
 		}else{
@@ -222,12 +232,11 @@ angular.module('myApp', []).factory('myService',function myService($http){
 			
 			$scope.per={};
 			$scope.per.pParent = $scope.pParent;
-			
-			
 		}
 	}
 	
 	$scope.test = function(id,pId){
+		$scope.addOrEdit = false;
 		$scope.pParent = id;
 		var param = JSON.stringify({"pId":id});
 		myService.findPermission(param,function(error,data){

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.druid.util.StringUtils;
-
 import cn.heckman.manager.framework.common.Constants;
 import cn.heckman.manager.framework.common.ResponseData;
 import cn.heckman.module.framework.pojo.TRole;
@@ -59,6 +57,28 @@ public class TRoleController {
 				rd.setMsg(Constants.getSuccessMsg(Constants.INSERT_SUCCESS));
 			}
 			rd.setCode(Constants.SUCCESS);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			rd.setCode(Constants.FAILED);
+			rd.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
+		}
+		return rd;
+	}
+
+	@RequestMapping("/find")
+	@ResponseBody
+	public ResponseData find(@RequestBody TRole role) {
+		ResponseData rd = new ResponseData();
+		try {
+			if (role != null && role.getrId() != null) {
+				int id = role.getrId();
+				rd.setData(service.find(id));
+				rd.setCode(Constants.SUCCESS);
+				rd.setMsg(Constants.getSuccessMsg(Constants.QUERY_SUCCESS));
+			} else {
+				rd.setCode(Constants.SUCCESS);
+				rd.setMsg(Constants.getSuccessMsg(Constants.QUERY_NULL));
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			rd.setCode(Constants.FAILED);

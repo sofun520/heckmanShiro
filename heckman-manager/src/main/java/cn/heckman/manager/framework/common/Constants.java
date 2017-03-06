@@ -73,6 +73,8 @@ public class Constants {
 	public static String UPDATE_SUCCESS = "10001002";
 	public static String DELETE_SUCCESS = "10001003";
 	public static String LOGOUT_SUCCESS = "10001004";
+	public static String QUERY_NULL = "10001005";
+	public static String QUERY_SUCCESS = "10001006";
 
 	public static String getSuccessMsg(String errorCode) {
 		StringBuffer a = new StringBuffer("");
@@ -88,6 +90,12 @@ public class Constants {
 			break;
 		case "10001004":
 			a = new StringBuffer("注销成功");
+			break;
+		case "10001005":
+			a = new StringBuffer("未查询到数据");
+			break;
+		case "10001006":
+			a = new StringBuffer("查询成功");
 			break;
 		default:
 			a = new StringBuffer("");

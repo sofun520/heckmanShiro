@@ -105,16 +105,64 @@ body{
 				</table>
 			</div>
 			<div class="col-sm-5">
-				<table class="table table-bordered table-striped">
-					<tr>
-						<td height="400">
-							<ul id="treeDemo" class="ztree"></ul>
-							<br>
-							<ul tree class="ztree" ng-model="selectNode"></ul> 
-						</td>
-					</tr>
-				</table>
-				<a href="javascript:void(0)" class="btn btn-info btn-sm" ng-click="save()">保存</a>
+				<div ng-if="assignMenuShow">
+					<table class="table table-bordered table-striped">
+						<tr><td>分配权限</td></tr>
+						<tr>
+							<td height="400">
+								<ul id="treeDemo" class="ztree"></ul>
+								<br>
+								<ul tree class="ztree" ng-model="selectNode"></ul> 
+							</td>
+						</tr>
+					</table>
+					<a href="javascript:void(0)" class="btn btn-info btn-sm" ng-click="save()">保存</a>
+				</div>
+				<div ng-if="roleInfoShow">
+					<table class="table table-bordered table-striped">
+						<tr><td>{{addOrEdit?'新增角色':'修改角色'}}</td></tr>
+						<tr>
+							<td>
+								<form class="form-horizontal" id="myForm"
+						method="post">
+						<div class="box-body">
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">角色ID</label>
+								<div class="col-sm-9">
+									<input type="hidden" ng-model="roleInfo.rId"
+										class="form-control input-sm" placeholder="">
+									<input type="text" readonly="readonly" ng-model="roleInfo.rId"
+										class="form-control input-sm" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">角色名称</label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="roleInfo.rDescription" required
+										class="form-control input-sm" id="search_aName" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label">角色代码</label>
+								<div class="col-sm-9">
+									<input type="text" ng-model="roleInfo.rName" required
+										class="form-control input-sm" id="search_aName" placeholder="">
+								</div>
+							</div>
+							<div class="form-group" style="padding-right: 0px;">
+								<label for="search_aName" class="col-sm-3 control-label"></label>
+								<div class="col-sm-9">
+									<button type="button" ng-click="submit()" class="btn btn-info btn-sm">保存</button>
+									<button type="button" ng-click="reset()" class="btn btn-info btn-sm">重置</button>
+								</div>
+							</div>
+						</div>
+						<!-- /.box-footer -->
+					</form>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 <script type="text/javascript">
 </script>
@@ -176,16 +224,43 @@ angular.module('myApp', []).factory('myService',function myService($http){
 			}).error(function (e) {  
 	            callback(e);  
 	        });
+		},
+		saveRole:function saveRole(query,callback){
+			$http({
+				method : "post",
+				url : "../api/role/save",
+				data : query,
+				headers : {
+					'Content-Type' : 'application/json;charset=UTF-8'
+				}
+			}).success(function(data) {
+				callback(null, data);
+			}).error(function (e) {  
+	            callback(e);  
+	        });
+		},
+		findRole:function findRole(query,callback){
+			$http({
+				method : "post",
+				url : "../api/role/find",
+				data : query,
+				headers : {
+					'Content-Type' : 'application/json;charset=UTF-8'
+				}
+			}).success(function(data) {
+				callback(null, data);
+			}).error(function (e) {  
+	            callback(e);  
+	        });
 		}
 	}
 }).controller('roleCtrl',["myService","$scope", "$http",function(myService,$scope, $http){
-	/* var treeObj;
-	treeObj=$.fn.zTree.init($("#treeDemo"), setting, data.returnData);
-    treeObj.expandAll(true); */
-    
     $scope.init = function(){
 		$scope.roleId = 0;
 		$scope.loadRoleList();
+		$scope.assignMenuShow = false;
+		$scope.roleInfoShow = true;
+		$scope.addOrEdit = true;
 	}
 	
 	$scope.loadRoleList = function(){
@@ -233,11 +308,27 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.addRole = function(id){
-		window.location.href='editRole';
+		$scope.roleInfo = {};
+		$scope.assignMenuShow = false;
+		$scope.roleInfoShow = true;
+		$scope.addOrEdit = true;
 	}
 	
 	$scope.editRole = function(id){
-		window.location.href='editRole?id='+id;
+		$scope.addOrEdit = false;
+		$scope.assignMenuShow = false;
+		$scope.roleInfoShow = true;
+		var param = JSON.stringify({"rId":id});
+		myService.findRole(param,function(error,data){
+			if(!error){
+				console.log(data);
+				if(data.code==0){
+					$scope.roleInfo = data.data;
+				}else{
+					$.alert({title: '系统提示',content: data.msg});
+				}
+			}
+		});
 	}
 	
 	$scope.delRole = function(id){
@@ -275,6 +366,9 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	
 	var treeObj;
 	$scope.assignMenu = function(id){
+		$scope.assignMenuShow = true;
+		$scope.roleInfoShow = false;
+	
 		$scope.roleId = id;
 		
 		$scope.setting = {
@@ -334,6 +428,26 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		}else{
 			$.alert('请为具体角色勾选权限菜单！');
 		}
+	}
+	
+	$scope.submit = function(){
+		var data={};
+		$("#myForm").serializeArray().map(function(x){
+			data[x.name]=x.value;
+		});
+		
+		myService.saveRole(data,function(error,data){
+			if(!error){
+				if(data.code==0){
+					window.location.reload();
+				}
+			}
+		});
+		
+	}
+	
+	$scope.reset = function(){
+		$('#myForm')[0].reset();
 	}
 	
 }]).directive('tree',function(){ 

@@ -41,9 +41,9 @@
 			<value>
 				/login=anon
 				/getVerifyCodeImage=anon
+				/home=authc
 				/admin/**=authc
 				/api/**=authc
-				/home/**=authc
 				/user/info**=authc
 				/admin/listUser**=authc,perms[admin:manage]
 			</value>
