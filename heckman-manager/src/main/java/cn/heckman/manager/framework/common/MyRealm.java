@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -18,6 +19,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cn.heckman.common.utils.ShiroSessionUtil;
 import cn.heckman.module.framework.pojo.TPermission;
 import cn.heckman.module.framework.pojo.TRole;
 import cn.heckman.module.framework.pojo.TUser;
@@ -69,17 +71,24 @@ public class MyRealm extends AuthorizingRealm {
 			System.out.println("==========" + JSONObject.toJSONString(user));
 			System.out.println("==========token"
 					+ JSONObject.toJSONString(token));
-
-			if (token.getUsername().equals(user.getuUsername())) {
-				ShiroSessionUtil.setSession("userinfo", user);
-				return new SimpleAuthenticationInfo(user.getuUsername(),
-						user.getuPassword(), getName());
-			} else {
-				throw new AuthenticationException();
+			if ("2".equals(user.getuStatus())) {
+				throw new LockedAccountException();
+			} else if ("0".equals(user.getuStatus())) {
+				if (token.getUsername().equals(user.getuUsername())) {
+					ShiroSessionUtil.setSession(
+							ShiroSessionUtil.USER_SESSION_NAME, user);
+					return new SimpleAuthenticationInfo(user.getuUsername(),
+							user.getuPassword(), getName());
+				} else {
+					throw new AuthenticationException();
+				}
+			} else if ("1".equals(user.getuStatus())) {
+				throw new UnknownAccountException();
 			}
 		} else {
 			throw new UnknownAccountException();
 		}
+		return null;
 	}
 
 }

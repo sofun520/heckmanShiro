@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.heckman.common.utils.ShiroSessionUtil;
 import cn.heckman.manager.framework.common.Constants;
 import cn.heckman.manager.framework.common.ResponseData;
-import cn.heckman.manager.framework.common.ShiroSessionUtil;
 import cn.heckman.module.framework.pojo.RolePermissionTree;
 import cn.heckman.module.framework.pojo.TPermission;
 import cn.heckman.module.framework.pojo.TRole;
@@ -93,7 +93,7 @@ public class TPermissionController {
 			responseData.setData(list);
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.INNER_ERROR);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -119,7 +119,7 @@ public class TPermissionController {
 			responseData.setData(list);
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.INNER_ERROR);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -137,7 +137,7 @@ public class TPermissionController {
 			responseData.setData(per);
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.INNER_ERROR);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -168,7 +168,7 @@ public class TPermissionController {
 			}
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.FAILED);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -192,7 +192,7 @@ public class TPermissionController {
 			responseData.setMsg(Constants
 					.getSuccessMsg(Constants.DELETE_SUCCESS));
 		} catch (Exception ex) {
-			//ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.FAILED);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -213,7 +213,7 @@ public class TPermissionController {
 			responseData.setCode(Constants.SUCCESS);
 			responseData.setData(list);
 		} catch (Exception ex) {
-			// ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.INNER_ERROR);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));
@@ -240,7 +240,7 @@ public class TPermissionController {
 			rpService.saveRolePermissions(map);
 			responseData.setCode(Constants.SUCCESS);
 		} catch (Exception ex) {
-			// ex.printStackTrace();
+			ex.printStackTrace();
 			logger.error(ex);
 			responseData.setCode(Constants.INNER_ERROR);
 			responseData.setMsg(Constants.getErrMsg(Constants.INNER_ERROR));

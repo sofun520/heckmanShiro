@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>HECKMAN管理后台</title>
 <link rel="stylesheet"
 	href="../adminLTE/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -255,10 +255,6 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		}
 	}
 }).controller('roleCtrl',["myService","$scope", "$http",function(myService,$scope, $http){
-	/* var treeObj;
-	treeObj=$.fn.zTree.init($("#treeDemo"), setting, data.returnData);
-    treeObj.expandAll(true); */
-    
     $scope.init = function(){
 		$scope.roleId = 0;
 		$scope.loadRoleList();
@@ -316,11 +312,12 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		$scope.assignMenuShow = false;
 		$scope.roleInfoShow = true;
 		$scope.addOrEdit = true;
-		//window.location.href='editRole';
 	}
 	
 	$scope.editRole = function(id){
 		$scope.addOrEdit = false;
+		$scope.assignMenuShow = false;
+		$scope.roleInfoShow = true;
 		var param = JSON.stringify({"rId":id});
 		myService.findRole(param,function(error,data){
 			if(!error){

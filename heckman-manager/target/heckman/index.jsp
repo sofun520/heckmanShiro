@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>HECKMAN管理系统  -登录</title>
 <link rel="stylesheet"
 	href="adminLTE/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -47,7 +47,7 @@
 		</div>
 		<!-- /.login-logo -->
 		<div class="login-box-body">
-			<p class="login-box-msg">${message_login}
+			<p class="login-box-msg">{{loginMsg}}
 				<span style=""
 					ng-show="myForm.uUsername.$dirty && myForm.uUsername.$invalid">
 					<span ng-show="myForm.uUsername.$error.required">请输入用户名</span>
@@ -92,7 +92,7 @@
 					<div class="col-xs-12">
 						<button type="button" ng-click="submit()"
 							ng-disabled="allComplate"
-							class="btn btn-primary btn-block btn-flat">登录{{submiting?"中":""}}</button>
+							class="btn btn-primary btn-block btn-flat">登录{{submiting?"中...":""}}</button>
 					</div>
 					<!-- /.col -->
 				</div>
@@ -169,6 +169,7 @@
 						location.href='home';
 					}else{
 						$scope.submiting = false;
+						$scope.loginMsg = data.msg;
 					}
 				});
 			};

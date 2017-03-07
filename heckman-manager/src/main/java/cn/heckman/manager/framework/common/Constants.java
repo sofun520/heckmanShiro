@@ -33,13 +33,13 @@ public class Constants {
 		StringBuffer a = new StringBuffer("");
 		switch (errorCode) {
 		case "10000001":
-			a = new StringBuffer("未知账户");
+			a = new StringBuffer("该用户不存在");
 			break;
 		case "10000002":
-			a = new StringBuffer("错误的凭证");
+			a = new StringBuffer("用户名或密码不正确");
 			break;
 		case "10000003":
-			a = new StringBuffer("账户已锁定");
+			a = new StringBuffer("用户已被锁定");
 			break;
 		case "10000004":
 			a = new StringBuffer("错误次数过多");

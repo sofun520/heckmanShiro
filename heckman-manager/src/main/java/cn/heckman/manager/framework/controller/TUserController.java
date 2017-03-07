@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.druid.util.StringUtils;
-
+import cn.heckman.common.utils.ShiroSessionUtil;
 import cn.heckman.manager.framework.common.Constants;
 import cn.heckman.manager.framework.common.ResponseData;
-import cn.heckman.manager.framework.common.ShiroSessionUtil;
 import cn.heckman.module.framework.pojo.TUser;
 import cn.heckman.module.framework.pojo.UserRoleTree;
 import cn.heckman.module.framework.service.TUserService;
+
+import com.alibaba.druid.util.StringUtils;
 
 @Controller
 @RequestMapping("/api/user")

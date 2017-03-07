@@ -91,4 +91,9 @@ public class WebController {
 	public ModelAndView user() {
 		return new ModelAndView("admin/user");
 	}
+
+	@RequestMapping("/admin/operateLog")
+	public ModelAndView operateLog() {
+		return new ModelAndView("admin/operateLog");
+	}
 }

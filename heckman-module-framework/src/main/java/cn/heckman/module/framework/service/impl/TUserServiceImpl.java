@@ -6,8 +6,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.heckman.common.utils.ShiroSessionUtil;
+import cn.heckman.module.framework.common.OperateLogConstants;
+import cn.heckman.module.framework.dao.TOperateLogMapper;
 import cn.heckman.module.framework.dao.TUserMapper;
 import cn.heckman.module.framework.dao.TUserRoleMapper;
+import cn.heckman.module.framework.pojo.TOperateLog;
 import cn.heckman.module.framework.pojo.TPermission;
 import cn.heckman.module.framework.pojo.TUser;
 import cn.heckman.module.framework.pojo.UserRoleTree;
@@ -22,11 +26,33 @@ public class TUserServiceImpl implements TUserService {
 	@Autowired
 	private TUserRoleMapper urDao;
 
+	@Autowired
+	private TOperateLogMapper logDao;
+
 	public int insert(TUser t) {
+		logDao.insert(new TOperateLog(
+				OperateLogConstants.USER_INSERT_OPTION,
+				OperateLogConstants
+						.getOperateLogDes(OperateLogConstants.USER_INSERT_OPTION)
+						+ ":username=" + t.getuUsername(),
+				((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuId(), ((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuUsername()));
 		return dao.insert(t);
 	}
 
 	public void update(TUser t) {
+		logDao.insert(new TOperateLog(
+				OperateLogConstants.USER_UPDATE_OPTION,
+				OperateLogConstants
+						.getOperateLogDes(OperateLogConstants.USER_UPDATE_OPTION)
+						+ ":id=" + t.getuId(), ((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuId(), ((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuUsername()));
 		dao.update(t);
 	}
 
@@ -35,6 +61,15 @@ public class TUserServiceImpl implements TUserService {
 	}
 
 	public void delete(Integer id) {
+		logDao.insert(new TOperateLog(
+				OperateLogConstants.USER_DELETE_OPTION,
+				OperateLogConstants
+						.getOperateLogDes(OperateLogConstants.USER_DELETE_OPTION)
+						+ ":id=" + id, ((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuId(), ((TUser) ShiroSessionUtil
+						.getSession(ShiroSessionUtil.USER_SESSION_NAME))
+						.getuUsername()));
 		dao.delete(id);
 	}
 

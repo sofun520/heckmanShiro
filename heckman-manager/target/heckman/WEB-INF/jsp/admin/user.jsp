@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>HECKMAN管理后台</title>
 <link rel="stylesheet"
 	href="../adminLTE/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -324,13 +324,13 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		});
 	}
 	
-	$scope.addRole = function(id){
+	/* $scope.addRole = function(id){
 		//window.location.href='editRole';
 	}
 	
 	$scope.editRole = function(id){
 		window.location.href='editRole?id='+id;
-	}
+	} */
 	
 	$scope.delRole = function(id){
 		$.confirm({
@@ -420,8 +420,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 						console.log(data);
 						if(data.code==0){
 							$scope.assignMenu($scope.roleId);
-							
-							window.location.reload();
+							//window.location.reload();
 						}else{
 							$.alert({title: '系统提示',content: data.msg});
 						}

@@ -4,7 +4,6 @@ cn\heckman\manager\framework\common\MD5Util.class
 cn\heckman\manager\framework\controller\TRoleController.class
 cn\heckman\manager\framework\controller\WebController.class
 cn\heckman\manager\framework\controller\TPermissionController.class
-cn\heckman\manager\framework\common\ShiroSessionUtil.class
 cn\heckman\manager\framework\controller\TUserController.class
 cn\heckman\manager\framework\common\VerifyCodeUtil.class
 cn\heckman\manager\framework\common\Constants.class

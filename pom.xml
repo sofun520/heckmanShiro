@@ -223,9 +223,8 @@
 
 	<packaging>pom</packaging>
 	<modules>
-		<module>heckman-module-framework</module>
 		<module>heckman-manager</module>
-		<module>heckman-log</module>
 		<module>heckman-common</module>
+		<module>heckman-module-framework</module>
 	</modules>
 </project>

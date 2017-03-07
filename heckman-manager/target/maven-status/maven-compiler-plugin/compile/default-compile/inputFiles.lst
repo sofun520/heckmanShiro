@@ -7,6 +7,6 @@ D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\fra
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\Login.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\TUserController.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\MD5Util.java
-D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\ShiroSessionUtil.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\common\PrivilegeTag.java
+D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\OperateLogController.java
 D:\workspace\shiro2\heckman\heckman-manager\src\main\java\cn\heckman\manager\framework\controller\TPermissionController.java

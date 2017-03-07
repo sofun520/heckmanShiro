@@ -75,7 +75,7 @@
 		from t_user
 		where u_id = #{uId,jdbcType=INTEGER}
 	</select>
-
+	
 	<select id="query" resultMap="BaseResultMap" parameterType="java.util.Map">
 		SELECT
 		u.*, r.*
@@ -158,6 +158,7 @@
 				AND per.p_parent is null
 			</if>
 		</if>
+		ORDER BY per.p_id
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">
