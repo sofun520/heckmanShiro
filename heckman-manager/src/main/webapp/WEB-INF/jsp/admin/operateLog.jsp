@@ -71,6 +71,7 @@ body{
 				<div class="col-sm-4">
 					<button type="button" ng-click="loadUserList()" class="btn btn-info btn-sm">查询</button>
 					<button type="button" ng-click="reset()" class="btn btn-info btn-sm">清空</button>
+					<button type="button" ng-click="exportFile()" file-export down-file-type="xls" class="btn btn-info btn-sm">导出</button>
 				</div>
 			</div>
 			<!-- /.box-footer -->
@@ -172,6 +173,36 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	$scope.reset = function(){
 		$scope.oBusCode = '';
 		$scope.oUserName = '';
+	}
+	
+	$scope.exportFile = function(){
+		var param = JSON.stringify({"oBusCode":$scope.oBusCode,"oUserName":$scope.oUserName});
+		$http({
+            url: '../api/operateLog/exportExcel',
+            method: 'post',
+            data: param,
+            headers: {
+                'Content-type': 'application/json'
+            },
+            responseType: 'arraybuffer'
+        }).success(function (data, status, headers) {
+            var blob = new Blob([data], {type: "application/vnd.ms-excel"});
+            var filename = 'test' + '.xls';
+            if (window.navigator.msSaveOrOpenBlob) {// For IE:
+                navigator.msSaveBlob(blob, filename);
+            }else{ // For other browsers:
+                var objectUrl = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                document.body.appendChild(a);
+                a.setAttribute('style', 'display:none');
+                a.setAttribute('href', objectUrl);
+                a.setAttribute('download', filename);
+                a.click();
+                URL.revokeObjectURL(objectUrl);
+            }
+        }).error(function (data, status) {
+            alert(data);
+        });
 	}
 	
 	
