@@ -99,7 +99,15 @@ body{
 						</tr>
 					</tbody>
 				</table>
-		</div>	
+		</div>
+		<div class="box-footer clearfix" ng-if="dataShow">
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="#" ng-click="loadUserList(pageCount-1)">«</a></li>
+                <li ng-repeat="x in pages track by $index"  class="{{x==page?'active':''}}"><a href="#" ng-click="loadUserList(x)">{{x}}</a></li>
+                <li><a href="#" ng-click="loadUserList(page+1)">»</a></li>
+              </ul>
+        </div>
+	</div>
 <script type="text/javascript">
 </script>
 <script type="text/javascript">
@@ -124,10 +132,13 @@ angular.module('myApp', []).factory('myService',function myService($http){
     
     $scope.init = function(){
 		$scope.loadUserList();
+		$scope.pages=[];
 	}
 	
-	$scope.loadUserList = function(){
-		var param = JSON.stringify({"oBusCode":$scope.oBusCode,"oUserName":$scope.oUserName});
+	$scope.loadUserList = function(page){
+		page=typeof(page)=="undefined"?1:page;
+		page=page>$scope.pageCount?$scope.pageCount:page;
+		var param = JSON.stringify({"oBusCode":$scope.oBusCode,"oUserName":$scope.oUserName,"page":page});
 		myService.loadOLList(param,function(error,data){
 			if(!error){
 				console.log(data);
@@ -136,6 +147,11 @@ angular.module('myApp', []).factory('myService',function myService($http){
 						$scope.dataShow = true;
 						$scope.noDataShow = false;					
 						$scope.olList = data.data;
+						if(data.page>0 && data.pageCount>0){
+							$scope.page = data.page;
+							$scope.pageCount = data.pageCount;
+							$scope.pageCompoment($scope.pageCount);
+						}
 					}else{
 						$scope.dataShow = false;
 						$scope.noDataShow = true;					
@@ -145,6 +161,12 @@ angular.module('myApp', []).factory('myService',function myService($http){
 				}
 			}
 		});
+	}
+	
+	$scope.pageCompoment = function(pageSize){
+		for(var i=0;i<pageSize;i++){
+			$scope.pages[i]=(i+1)+'';					
+		}
 	}
 	
 	$scope.reset = function(){

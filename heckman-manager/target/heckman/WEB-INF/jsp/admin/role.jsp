@@ -261,6 +261,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 		$scope.assignMenuShow = false;
 		$scope.roleInfoShow = true;
 		$scope.addOrEdit = true;
+		$scope.roleInfo = {};
 	}
 	
 	$scope.loadRoleList = function(){
@@ -308,7 +309,6 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.addRole = function(id){
-		$scope.roleInfo = {};
 		$scope.assignMenuShow = false;
 		$scope.roleInfoShow = true;
 		$scope.addOrEdit = true;
@@ -431,12 +431,8 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.submit = function(){
-		var data={};
-		$("#myForm").serializeArray().map(function(x){
-			data[x.name]=x.value;
-		});
-		
-		myService.saveRole(data,function(error,data){
+		var param = JSON.stringify($scope.roleInfo);
+		myService.saveRole(param,function(error,data){
 			if(!error){
 				if(data.code==0){
 					window.location.reload();
@@ -447,7 +443,7 @@ angular.module('myApp', []).factory('myService',function myService($http){
 	}
 	
 	$scope.reset = function(){
-		$('#myForm')[0].reset();
+		
 	}
 	
 }]).directive('tree',function(){ 

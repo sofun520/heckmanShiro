@@ -2,7 +2,9 @@ package cn.heckman.module.framework.pojo;
 
 import java.util.Date;
 
-public class TOperateLog {
+import cn.heckman.module.framework.common.BasePage;
+
+public class TOperateLog extends BasePage{
 	/**
      * 
      */

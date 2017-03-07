@@ -34,6 +34,22 @@
 		<if test="oUserName != null and oUserName != ''">
 			and o_user_name = #{oUserName}
 		</if>
+		<if test="pageSize != null and pageSize >0">
+			limit #{startIndex},#{pageSize}
+		</if>
+	</select>
+
+	<select id="count" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(*)
+		from t_operate_log
+		where 1=1
+		<if test="oBusCode != null and oBusCode != ''">
+			and o_bus_code = #{oBusCode}
+		</if>
+		<if test="oUserName != null and oUserName != ''">
+			and o_user_name = #{oUserName}
+		</if>
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">

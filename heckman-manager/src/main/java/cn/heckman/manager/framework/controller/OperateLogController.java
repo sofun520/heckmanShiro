@@ -29,14 +29,21 @@ public class OperateLogController {
 	@RequestMapping(value = "/query", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseData queryPermissionMenu(@RequestBody TOperateLog operateLog) {
+		int page = operateLog.getPage() == null ? 1 : operateLog.getPage();
+		int pageSize = 15;
 		ResponseData responseData = new ResponseData();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("oBusCode", operateLog.getoBusCode());
 		map.put("oUserName", operateLog.getoUserName());
+		map.put("startIndex", (page - 1) * pageSize);
+		map.put("pageSize", pageSize);
 		try {
 			List<TOperateLog> list = service.query(map);
+			int total = service.count(map);
 			responseData.setData(list);
 			responseData.setCode(Constants.SUCCESS);
+			responseData.setPage(page);
+			responseData.setPageCount((pageSize + total - 1) / pageSize);
 		} catch (Exception ex) {
 			// ex.printStackTrace();
 			logger.error(ex);
